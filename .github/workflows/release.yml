@@ -1,0 +1,65 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## MRAB - Make Rog Ally Better
+
+            One-click configuration script for ROG Ally on SteamOS.
+
+            ### Installation
+
+            Download and run the installation script:
+
+            ```bash
+            wget https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh
+            sudo bash install.sh
+            ```
+
+            Or use curl:
+
+            ```bash
+            curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh | sudo bash
+            ```
+
+            ### What's Changed
+
+            See commit history for details.
+
+            ---
+
+            **Full Changelog**: https://github.com/0chencc/MRAB/commits/${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload install.sh
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./install.sh
+          asset_name: install.sh
+          asset_content_type: application/x-sh
