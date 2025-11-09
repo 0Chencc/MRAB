@@ -68,54 +68,19 @@ jobs:
           body: |
             ## MRAB - Make Rog Ally Better
 
-            **[English](#english) | [简体中文](#简体中文)**
-
-            ---
-
             ## 简体中文
 
-            ROG Ally 在 SteamOS 上的一键按键映射配置工具。
-
-            ### ✨ 主要功能
-
-            - 🎮 优化 ROG Ally 的 Start/Select 按键布局
-            - 🛡️ 自动保护配置免受 SteamOS 更新覆盖
-            - 🎯 支持背部拨片按键映射
-            - ⚡ 一键安装，简单快捷
-
-            ### 📥 安装方法
-
-            下载并运行安装脚本：
-
-            ```bash
-            wget https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh
-            sudo bash install.sh
-            ```
-
-            或使用 curl：
+            ### 📥 安装
 
             ```bash
             curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh | sudo bash
             ```
 
-            ### 🗑️ 卸载方法
-
-            如需卸载并恢复默认按键映射：
+            ### 🗑️ 卸载
 
             ```bash
             curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/uninstall.sh | sudo bash
             ```
-
-            ### 📋 按键映射说明
-
-            - **Control Center (短按)** → Select
-            - **Armory Crate (短按)** → Start
-            - **原 Select 按键** → Guide
-            - **原 Start 按键** → Quick Access
-            - **Control Center (长按)** → Keyboard
-            - **Armory Crate (长按)** → Quick Access 2
-            - **左侧拨片** → Left Paddle 1
-            - **右侧拨片** → Right Paddle 1
 
             ### 📝 更新内容
 
@@ -129,25 +94,7 @@ jobs:
 
             ## English
 
-            One-click button mapping configuration tool for ROG Ally on SteamOS.
-
-            ### ✨ Features
-
-            - 🎮 Optimized Start/Select button layout for ROG Ally
-            - 🛡️ Automatic protection against SteamOS update overwrites
-            - 🎯 Support for rear paddle button mapping
-            - ⚡ One-click installation, simple and quick
-
             ### 📥 Installation
-
-            Download and run the installation script:
-
-            ```bash
-            wget https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh
-            sudo bash install.sh
-            ```
-
-            Or use curl:
 
             ```bash
             curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh | sudo bash
@@ -155,22 +102,9 @@ jobs:
 
             ### 🗑️ Uninstallation
 
-            To uninstall and restore default button mappings:
-
             ```bash
             curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/uninstall.sh | sudo bash
             ```
-
-            ### 📋 Button Mapping
-
-            - **Control Center (Short Press)** → Select
-            - **Armory Crate (Short Press)** → Start
-            - **Original Select Button** → Guide
-            - **Original Start Button** → Quick Access
-            - **Control Center (Long Press)** → Keyboard
-            - **Armory Crate (Long Press)** → Quick Access 2
-            - **Left Paddle** → Left Paddle 1
-            - **Right Paddle** → Right Paddle 1
 
             ### 📝 What's Changed
 
