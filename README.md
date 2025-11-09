@@ -24,17 +24,8 @@ One-click configuration script to optimize button mapping for ROG Ally running S
 
 ### Stable Release (Recommended)
 
-Install from the latest release:
-
 ```bash
 curl -fsSL https://github.com/0chencc/MRAB/releases/latest/download/install.sh | sudo bash
-```
-
-Or download manually:
-
-```bash
-wget https://github.com/0chencc/MRAB/releases/latest/download/install.sh
-sudo bash install.sh
 ```
 
 ### Development Version
@@ -62,13 +53,6 @@ If you want to restore the default button mapping configuration, you can run the
 
 ```bash
 curl -fsSL https://github.com/0chencc/MRAB/releases/latest/download/uninstall.sh | sudo bash
-```
-
-Or download manually:
-
-```bash
-wget https://github.com/0chencc/MRAB/releases/latest/download/uninstall.sh
-sudo bash uninstall.sh
 ```
 
 ### Local Uninstallation

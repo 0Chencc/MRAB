@@ -24,17 +24,8 @@
 
 ### 稳定版本（推荐）
 
-从最新 release 安装：
-
 ```bash
 curl -fsSL https://github.com/0chencc/MRAB/releases/latest/download/install.sh | sudo bash
-```
-
-或者手动下载后安装：
-
-```bash
-wget https://github.com/0chencc/MRAB/releases/latest/download/install.sh
-sudo bash install.sh
 ```
 
 ### 开发版本
@@ -62,13 +53,6 @@ sudo bash install.sh
 
 ```bash
 curl -fsSL https://github.com/0chencc/MRAB/releases/latest/download/uninstall.sh | sudo bash
-```
-
-或者手动下载后卸载：
-
-```bash
-wget https://github.com/0chencc/MRAB/releases/latest/download/uninstall.sh
-sudo bash uninstall.sh
 ```
 
 ### 本地卸载
