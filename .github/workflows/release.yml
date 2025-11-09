@@ -15,6 +15,47 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+
+      - name: Generate Changelog and Contributors
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed -n '2p')
+          CURRENT_TAG=${{ github.ref_name }}
+
+          echo "Previous tag: $PREVIOUS_TAG"
+          echo "Current tag: $CURRENT_TAG"
+
+          # Generate changelog
+          if [ -z "$PREVIOUS_TAG" ]; then
+            # First release, get all commits
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            # Get commits between tags
+            CHANGELOG=$(git log ${PREVIOUS_TAG}..${CURRENT_TAG} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          # Generate contributors list
+          if [ -z "$PREVIOUS_TAG" ]; then
+            CONTRIBUTORS=$(git log --pretty=format:"%an" --no-merges | sort -u | sed 's/^/- @/' | paste -sd ',' - | sed 's/,/, /g')
+          else
+            CONTRIBUTORS=$(git log ${PREVIOUS_TAG}..${CURRENT_TAG} --pretty=format:"%an" --no-merges | sort -u | sed 's/^/@/' | paste -sd ',' - | sed 's/,/, /g')
+          fi
+
+          # Set output using the new method
+          {
+            echo 'changelog<<EOF'
+            echo "$CHANGELOG"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo 'contributors<<EOF'
+            echo "$CONTRIBUTORS"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
@@ -27,9 +68,77 @@ jobs:
           body: |
             ## MRAB - Make Rog Ally Better
 
-            One-click configuration script for ROG Ally on SteamOS.
+            **[English](#english) | [简体中文](#简体中文)**
 
-            ### Installation
+            ---
+
+            ## 简体中文
+
+            ROG Ally 在 SteamOS 上的一键按键映射配置工具。
+
+            ### ✨ 主要功能
+
+            - 🎮 优化 ROG Ally 的 Start/Select 按键布局
+            - 🛡️ 自动保护配置免受 SteamOS 更新覆盖
+            - 🎯 支持背部拨片按键映射
+            - ⚡ 一键安装，简单快捷
+
+            ### 📥 安装方法
+
+            下载并运行安装脚本：
+
+            ```bash
+            wget https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh
+            sudo bash install.sh
+            ```
+
+            或使用 curl：
+
+            ```bash
+            curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh | sudo bash
+            ```
+
+            ### 🗑️ 卸载方法
+
+            如需卸载并恢复默认按键映射：
+
+            ```bash
+            curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/uninstall.sh | sudo bash
+            ```
+
+            ### 📋 按键映射说明
+
+            - **Control Center (短按)** → Select
+            - **Armory Crate (短按)** → Start
+            - **原 Select 按键** → Guide
+            - **原 Start 按键** → Quick Access
+            - **Control Center (长按)** → Keyboard
+            - **Armory Crate (长按)** → Quick Access 2
+            - **左侧拨片** → Left Paddle 1
+            - **右侧拨片** → Right Paddle 1
+
+            ### 📝 更新内容
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ### 👥 贡献者
+
+            感谢以下贡献者对本版本的贡献：${{ steps.changelog.outputs.contributors }}
+
+            ---
+
+            ## English
+
+            One-click button mapping configuration tool for ROG Ally on SteamOS.
+
+            ### ✨ Features
+
+            - 🎮 Optimized Start/Select button layout for ROG Ally
+            - 🛡️ Automatic protection against SteamOS update overwrites
+            - 🎯 Support for rear paddle button mapping
+            - ⚡ One-click installation, simple and quick
+
+            ### 📥 Installation
 
             Download and run the installation script:
 
@@ -44,9 +153,32 @@ jobs:
             curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/install.sh | sudo bash
             ```
 
-            ### What's Changed
+            ### 🗑️ Uninstallation
 
-            See commit history for details.
+            To uninstall and restore default button mappings:
+
+            ```bash
+            curl -fsSL https://github.com/0chencc/MRAB/releases/download/${{ github.ref_name }}/uninstall.sh | sudo bash
+            ```
+
+            ### 📋 Button Mapping
+
+            - **Control Center (Short Press)** → Select
+            - **Armory Crate (Short Press)** → Start
+            - **Original Select Button** → Guide
+            - **Original Start Button** → Quick Access
+            - **Control Center (Long Press)** → Keyboard
+            - **Armory Crate (Long Press)** → Quick Access 2
+            - **Left Paddle** → Left Paddle 1
+            - **Right Paddle** → Right Paddle 1
+
+            ### 📝 What's Changed
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ### 👥 Contributors
+
+            Thanks to these contributors for this release: ${{ steps.changelog.outputs.contributors }}
 
             ---
 
@@ -62,4 +194,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./install.sh
           asset_name: install.sh
+          asset_content_type: application/x-sh
+
+      - name: Upload uninstall.sh
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uninstall.sh
+          asset_name: uninstall.sh
           asset_content_type: application/x-sh

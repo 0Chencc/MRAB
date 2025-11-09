@@ -3,6 +3,11 @@
 # MRAB (Make Rog Ally Better)
 # One-click installation script for ROG Ally on SteamOS
 # GitHub: https://github.com/0chencc/MRAB
+#
+# Inspired by: https://github.com/ValveSoftware/SteamOS/issues/1937
+# This script implements the community-suggested solutions for ROG Ally
+# button mapping issues on SteamOS, including InputPlumber configuration
+# and atomic update persistence.
 
 set -e
 
@@ -25,9 +30,11 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Create directory if it doesn't exist
+# Create directories if they don't exist
 TARGET_DIR="/etc/inputplumber/capability_maps.d"
 TARGET_FILE="${TARGET_DIR}/ally_type1.yaml"
+ATOMIC_UPDATE_DIR="/etc/atomic-update.conf.d"
+ATOMIC_UPDATE_FILE="${ATOMIC_UPDATE_DIR}/mrab.conf"
 
 echo -e "${YELLOW}Creating directory: ${TARGET_DIR}${NC}"
 mkdir -p "${TARGET_DIR}"
@@ -128,6 +135,25 @@ else
     exit 1
 fi
 
+# Create atomic update whitelist to preserve configuration across SteamOS updates
+echo -e "${YELLOW}Creating atomic update whitelist...${NC}"
+mkdir -p "${ATOMIC_UPDATE_DIR}"
+cat > "${ATOMIC_UPDATE_FILE}" << 'EOF'
+# MRAB (Make Rog Ally Better) - Whitelist for SteamOS atomic updates
+# This file ensures MRAB configuration is preserved during SteamOS updates
+/etc/inputplumber/capability_maps.d/ally_type1.yaml
+EOF
+
+if [ -f "${ATOMIC_UPDATE_FILE}" ]; then
+    chmod 644 "${ATOMIC_UPDATE_FILE}"
+    echo -e "${GREEN}Atomic update whitelist created successfully!${NC}"
+    echo -e "${GREEN}Location: ${ATOMIC_UPDATE_FILE}${NC}"
+    echo -e "${GREEN}Your MRAB configuration will now persist across SteamOS updates!${NC}"
+else
+    echo -e "${YELLOW}Warning: Failed to create atomic update whitelist${NC}"
+    echo -e "${YELLOW}Configuration may be removed during SteamOS updates${NC}"
+fi
+
 # Restart InputPlumber service if it exists
 if systemctl list-units --full -all | grep -Fq "inputplumber.service"; then
     echo -e "${YELLOW}Restarting InputPlumber service...${NC}"
@@ -143,5 +169,11 @@ echo -e "  Installation Complete!"
 echo -e "==========================================${NC}"
 echo
 echo "Your ROG Ally is now configured with optimized button mappings."
+echo
+echo "Key features:"
+echo "  - Button mappings configured for ROG Ally on SteamOS"
+echo "  - Configuration protected from SteamOS updates via whitelist"
+echo "  - InputPlumber service restarted (if available)"
+echo
 echo "If the changes don't take effect immediately, please restart your device."
 echo
